@@ -6,6 +6,11 @@
  * see http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
+$.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+	options.url = 'http://192.168.2.3/' + options.url;
+});
+
 var jsVersion = 1.07;
 var sessionPassword = "reprap";
 var translationWarning = false;		// Set this to "true" if you want to look for missing translation entries
@@ -2736,18 +2741,24 @@ function addDefaultGCode(label, gcode) {
 }
 
 function addGCodeFile(filename) {
+	$("#table_gcode_files").removeClass("hidden");
+
 	$("#page_files h1").addClass("hidden");
 
-	var row =	'<tr data-item="' + filename + '"><td></td><td></td>';
-	row +=		'<td><span class="glyphicon glyphicon-asterisk"></span>' + filename + '</td>';
-	row +=		'<td class="hidden-xs">' + T("loading") + '</td>';
-	row +=		'<td>loading</td>';
-	row +=		'<td>loading</td>';
-	row +=		'<td>loading</td>';
-	row +=		'<td class="hidden-xs hidden-sm">' + T("loading") + '</td></tr>';
-	
-	$("#table_gcode_files").removeClass("hidden");
-	return $(row).appendTo("#table_gcode_files");
+	var table = $("#table_gcode_files").DataTable();
+
+
+
+	return $(table.row.add([
+		'',
+		'',
+		'<span class="glyphicon glyphicon-asterisk"></span>' + filename,
+		T("loading"),
+		T("loading"),
+		T("loading"),
+		T("loading"),
+		T("loading")
+	]).draw().node()).attr('data-item', filename);
 }
 
 function addMacroFile(filename) {
@@ -2828,14 +2839,10 @@ function clearGCodeDirectory() {
 }
 
 function clearGCodeFiles() {
-	$("#table_gcode_files > tbody").remove();
-	$("#table_gcode_files").addClass("hidden");
-	$("#page_files h1").removeClass("hidden");
-	if (isConnected) {
-		$("#page_files h1").text(T("No Files or Directories found"));
-	} else {
-		$("#page_files h1").text(T("Connect to your Duet to display G-Code files"));
-	}
+	console.log($("#table_gcode_files"));
+	var table = $("#table_gcode_files").DataTable();
+
+	table.rows().remove().draw();
 }
 
 function clearDefaultGCodes() {
@@ -3159,28 +3166,20 @@ function setGCodeFileItem(row, size, height, firstLayerHeight, layerHeight, fila
 }
 
 function setGCodeDirectoryItem(row) {
+	var table = $("#table_gcode_files").DataTable();
+
 	row.data("directory", row.data("item"));
 	row.removeData("item");
-	
-	row.children().eq(1).html('<button class="btn btn-danger btn-delete-gcode-directory btn-sm" title="' + T("Delete this directory") + '"><span class="glyphicon glyphicon-trash"></span></button>');
-	
-	var linkCell = row.children().eq(2);
-	linkCell.find("span").removeClass("glyphicon-asterisk").addClass("glyphicon-folder-open");
-	linkCell.html('<a href="#" class="gcode-directory">' + linkCell.html() + '</a>').prop("colspan", 6);
-	
-	for(var i=8; i>=3; i--) {
-		row.children().eq(i).remove();
+
+	var d = table.row(row).data();
+	d[1] = '<button class="btn btn-danger btn-delete-gcode-directory btn-sm" title="' + T("Delete this directory") + '"><span class="glyphicon glyphicon-trash"></span></button>';
+	d[2] = $(d[2]).find("span").removeClass("glyphicon-asterisk").addClass("glyphicon-folder-open");
+	d[2] = '<a href="#" class="gcode-directory">' + d[2].innerHtml + '</a>';
+	for(var i = 3; i < d.length; i++) {
+		d[i] = null;
 	}
-	
-	if (gcodeLastDirectory == undefined) {
-		var firstRow = $("#table_gcode_files tbody > tr:first-child");
-		if (firstRow != row) {
-			row.insertBefore(firstRow);
-		}
-	} else {
-		row.insertAfter(gcodeLastDirectory);
-	}
-	gcodeLastDirectory = row;
+	table.row(row).data(d);
+
 }
 
 function setGCodeDirectory(directory) {
