@@ -66,12 +66,14 @@ var gCodeTableOptions = {
 	"order": [ 2, 'asc' ],
 	columnDefs: [
 		{ targets: [0, 1], orderable: false },
-		{ targets: [2], render: function(data, type) {
-			if(type == 'type') {
-				return ($(data).hasClass('gcode-directory') ? 'D' : 'F') + $(data).text();
+		{ targets: [2],
+			render: function(data, type) {
+				if(type == 'type') {
+					return ($(data).hasClass('gcode-directory') ? 'D' : 'F') + $(data).text();
+				}
+				return data;
 			}
-			return data;
-		}},
+		},
 		{ targets: [3], render: function(data, type){
 			if(type == 'type') {
 				return parseSize(data);
@@ -846,6 +848,7 @@ function updateGCodeFiles() {
 						updateStatus();
 					} else {
 						$("#table_gcode_files").css("cursor", "wait");
+						gCodeTable.columns.adjust().draw();
 						updateGCodeFiles();
 					}
 				}
