@@ -68,14 +68,14 @@ var gCodeTableOptions = {
 		{ targets: [0, 1], orderable: false },
 		{ targets: [2],
 			render: function(data, type) {
-				if(type == 'type') {
+				if(type == 'sort') {
 					return ($(data).hasClass('gcode-directory') ? 'D' : 'F') + $(data).text();
 				}
 				return data;
 			}
 		},
 		{ targets: [3], render: function(data, type){
-			if(type == 'type') {
+			if(type == 'sort') {
 				return parseSize(data);
 			}
 			return data;
@@ -879,6 +879,7 @@ function updateGCodeFiles() {
 
 						isWaitingForFileInfo = false;
 						updateStatus();
+						gCodeTable.columns.adjust().draw("full-hold");
 					} else {
 						updateGCodeFiles();
 					}
