@@ -942,6 +942,13 @@ label[for="dropdown_language"] {
 #table_gcodes > tbody > tr > td:last-child {
 	padding: 6px;
 }
+#table_gcode_files tr.directory td:first-child {
+	border-right: none;
+}
+
+#table_gcode_files tr.directory td:nth-child(n+3) {
+	border-right: none;
+}
 
 #table_define_tool > tbody > tr:first-child > td:first-child {
 	padding-right: 9px;

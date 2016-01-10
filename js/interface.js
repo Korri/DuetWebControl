@@ -3222,7 +3222,7 @@ function setGCodeFileItem(row, size, height, firstLayerHeight, layerHeight, fila
 }
 
 function setGCodeDirectoryItem(row) {
-	$(row.node()).data("directory", $(row.node()).data("item")).removeData("item");
+	$(row.node()).data("directory", $(row.node()).data("item")).removeData("item").addClass('directory');
 
 	var d = row.data();
 	d[1] = '<button class="btn btn-danger btn-delete-gcode-directory btn-sm" title="' + T("Delete this directory") + '"><span class="glyphicon glyphicon-trash"></span></button>';
