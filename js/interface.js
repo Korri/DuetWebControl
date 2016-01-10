@@ -80,7 +80,12 @@ var gCodeTableOptions = {
 			}
 			return data;
 		}, type: 'num'},
-		{ targets: [4, 5, 6], type: "num"}
+		{ targets: [4, 5, 6], type: "num", render: function(data, type){
+			if(type == 'sort') {
+				return data ? parseFloat(data.replace(/[^0-9.]/g, '')) : 0;
+			}
+			return data;
+		}}
 	]
 };
 
